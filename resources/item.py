@@ -35,7 +35,7 @@ class Item(Resource):
         return {'message': "Item not found."}, 404
 
     @fresh_jwt_required
-    def post(name):
+    def post(self, name):
         if ItemModel.find_by_name(name):
             return {
                 'message': f"An item with name '{name}' already exists.'"
