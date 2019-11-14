@@ -26,7 +26,6 @@ class Item(Resource):
         help="Every item needs a store_id."
     )
 
-    @jwt_required
     def get(self, name):
         item = ItemModel.find_by_name(name)
         if item:
@@ -53,6 +52,18 @@ class Item(Resource):
 
         return item.json(), 201
 
+    def put(self, name):
+        data = Item.parser.parse_args()
+        item = ItemModel.find_by_name(name)
+
+        if item:
+            item.price = data['price']
+        else:
+            item = ItemModel(name, **data)
+
+        item.save_to_db()
+        return item.json(), 200
+
     @jwt_required
     def delete(self, name):
         claims = get_jwt_claims()  # we added a claim 'is_admin' in app.py
@@ -66,18 +77,6 @@ class Item(Resource):
             return {'message': "Item not found."}, 404
         
         return {'message': "Admin privileges required."}, 401
-
-    def put(self, name):
-        data = Item.parser.parse_args()
-        item = ItemModel.find_by_name(name)
-
-        if item:
-            item.price = data['price']
-        else:
-            item = ItemModel(name, **data)
-        
-        item.save_to_db()
-        return item.json(), 200
 
 
 class ItemList(Resource):

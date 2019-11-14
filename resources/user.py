@@ -103,7 +103,7 @@ class TokenRefresh(Resource):
     def post(self):
         """
         Get a new access token without requiring username and password,
-        but only the 'refresk token' provided during login.
+        but only the 'refresh token' provided during login.
         The refreshed access token has a 'fresh=False' argument which means
         the user may have not given username and password for a long time.
         """
