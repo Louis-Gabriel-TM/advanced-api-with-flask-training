@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from flask_jwt_extended import (
     fresh_jwt_required,
     get_jwt_claims,
@@ -26,7 +28,7 @@ class Item(Resource):
         help="Every item needs a store_id."
     )
 
-    def get(self, name):
+    def get(self, name: str) -> Tuple:
         item = ItemModel.find_by_name(name)
         if item:
             return item.json(), 200
@@ -34,7 +36,7 @@ class Item(Resource):
         return {'message': "Item not found."}, 404
 
     @fresh_jwt_required
-    def post(self, name):
+    def post(self, name: str) -> Tuple:
         if ItemModel.find_by_name(name):
             return {
                 'message': f"An item with name '{name}' already exists.'"
@@ -52,7 +54,7 @@ class Item(Resource):
 
         return item.json(), 201
 
-    def put(self, name):
+    def put(self, name: str) -> Tuple:
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
 
@@ -65,7 +67,7 @@ class Item(Resource):
         return item.json(), 200
 
     @jwt_required
-    def delete(self, name):
+    def delete(self, name: str) -> Tuple:
         claims = get_jwt_claims()  # we added a claim 'is_admin' in app.py
         if claims['is_admin']:
             item = ItemModel.find_by_name(name)
@@ -82,7 +84,7 @@ class Item(Resource):
 class ItemList(Resource):
     
     @jwt_optional  # user logged in or non logged in can access different data
-    def get(self):
+    def get(self) -> Tuple:
         user_id = get_jwt_identity()  # return None if non logged in
         items = [item.json() for item in ItemModel.find_all()]
 

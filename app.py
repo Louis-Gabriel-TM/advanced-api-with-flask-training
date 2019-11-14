@@ -1,3 +1,5 @@
+from typing import Dict, Tuple
+
 from flask import Flask,jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
@@ -21,7 +23,7 @@ api = Api(app)
 
 
 @app.before_first_request
-def create_tables():
+def create_tables() -> None:
     db.create_all()
 
 
@@ -29,47 +31,47 @@ jwt = JWTManager(app)
 
 
 @jwt.user_claims_loader  # to add arbitrary informations in JWTokens
-def add_claims_to_jwt(identity):  # 'identity' is defined at the token creation
+def add_claims_to_jwt(identity: int) -> Dict:  # 'identity' is defined at the token creation
     if identity == 1:  # should read admins list from a file or a database
         return {'is_admin': True}
 
     return {'is_admin': False}
 
 @jwt.token_in_blacklist_loader
-def check_if_token_in_blacklist(decrypted_token):
+def check_if_token_in_blacklist(decrypted_token: str) -> str:
     return decrypted_token['jti'] in BLACKLIST  # blacklist some previous tokens
 
 # The following methods customize JWT response or errors
 @jwt.expired_token_loader
-def expired_token_callback():
+def expired_token_callback() -> Tuple:
     return jsonify({
         'description': "The token has expired.",
         'error': 'token_expired'
     }), 401
 
 @jwt.invalid_token_loader
-def invalid_token_call_back(error):
+def invalid_token_call_back(error: str) -> Tuple:
     return jsonify({
         'description': "Signature verification failed.",
         'error': 'invalid_token'
     }), 401
 
 @jwt.unauthorized_loader
-def missing_token_callback(error):
+def missing_token_callback(error: str) -> Tuple:
     return jsonify({
         'description': "Request dos noy contain an access token.",
         'error': 'authorization_required'
     }), 401
 
 @jwt.needs_fresh_token_loader
-def token_not_fresh_callback():
+def token_not_fresh_callback() -> Tuple:
     return jsonify({
         'description': "The token is nor fresh.",
         'error': 'fresh_token_required'
     }), 401
 
 @jwt.revoked_token_loader
-def revoked_token_callback():
+def revoked_token_callback() -> Tuple:
     return jsonify({
         'description': "The token has been revoked.",
         'error': 'token_revoked'

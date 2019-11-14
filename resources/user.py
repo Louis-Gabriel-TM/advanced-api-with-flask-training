@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -37,7 +39,7 @@ class User(Resource):  # should be absent in production
     """
 
     @classmethod
-    def get(cls, user_id):
+    def get(cls, user_id: int) -> Tuple:
         user = UserModel.find_by_id(user_id)
 
         if user:
@@ -46,7 +48,7 @@ class User(Resource):  # should be absent in production
         return {'message': "User not found."}, 404
 
     @classmethod
-    def delete(cls, user_id):
+    def delete(cls, user_id: int) -> Tuple:
         user = UserModel.find_by_id(user_id)
 
         if user:
@@ -56,7 +58,7 @@ class User(Resource):  # should be absent in production
 
 class UserLogin(Resource):
     
-    def post(self):
+    def post(self) -> Tuple:
         data = _user_parser.parse_args()
         user = UserModel.find_by_username(data['username'])
 
@@ -75,7 +77,7 @@ class UserLogin(Resource):
 class UserLogout(Resource):
     
     @jwt_required
-    def post(self):
+    def post(self) -> Tuple:
         jti = get_raw_jwt()['jti']  # 'jti' for 'JWT ID', a unique identifier for a token
         user_id = get_jwt_identity()
         BLACKLIST.add(jti)
@@ -85,7 +87,7 @@ class UserLogout(Resource):
 
 class UserRegister(Resource):
     
-    def post(self):
+    def post(self) -> Tuple:
         data = _user_parser.parse_args()
 
         if UserModel.find_by_username(data['username']):
@@ -100,7 +102,7 @@ class UserRegister(Resource):
 class TokenRefresh(Resource):
 
     @jwt_refresh_token_required
-    def post(self):
+    def post(self) -> Tuple:
         """
         Get a new access token without requiring username and password,
         but only the 'refresh token' provided during login.
