@@ -26,11 +26,13 @@ class UserModel(db.Model):
         }
 
     @classmethod
-    def find_by_id(cls, _id: int):
+    # type hinting with the current class:
+    def find_by_id(cls, _id: int) -> "UserModel":
+
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
-    def find_by_username(cls, username: str):
+    def find_by_username(cls, username: str) -> "UserModel":
         return cls.query.filter_by(username=username).first()
 
     def save_to_db(self) -> None:

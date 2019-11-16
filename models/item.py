@@ -5,7 +5,7 @@ from db import db
 
 # ItemJSON is a custom type. It is a Dict where keys are str
 # and the values can be int, float or str:
-ItemJSON = Dict[str, Union(int, float, str)]
+ItemJSON = Dict[str, Union[int, float, str]]
 
 
 class ItemModel(db.Model):
@@ -33,11 +33,12 @@ class ItemModel(db.Model):
         }
 
     @classmethod
-    def find_all(cls) -> List:
+    # type hinting with the current class:
+    def find_all(cls) -> List["ItemModel"]:
         return cls.query.all()
 
     @classmethod
-    def find_by_name(cls, name: str):
+    def find_by_name(cls, name: str) -> "ItemModel":
         return cls.query.filter_by(name=name).first()
 
     def save_to_db(self) -> None:

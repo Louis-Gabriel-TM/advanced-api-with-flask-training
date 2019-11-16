@@ -6,7 +6,7 @@ from models.item import ItemJSON
 # StoreJSON is another custom type. It is a Dict where keys are str
 # and the values can be int, str or a list of ItemJSON, a previous
 # custom type:
-StoreJSON = Dict[str, Union(int, str, List[ItemJSON])]
+StoreJSON = Dict[str, Union[int, str, List[ItemJSON]]]
 
 
 class StoreModel(db.Model):
@@ -31,11 +31,12 @@ class StoreModel(db.Model):
         }
 
     @classmethod
-    def find_all(cls) -> List:
+    # type hinting with the current class:
+    def find_all(cls) -> List["StoreModel"]:
         return cls.query.all()
 
     @classmethod
-    def find_by_name(cls, name):
+    def find_by_name(cls, name) -> "StoreModel":
         return cls.query.filter_by(name=name).first()
 
     def save_to_db(self) -> None:
