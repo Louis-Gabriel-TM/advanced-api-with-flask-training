@@ -1,23 +1,29 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from db import db
+from models.item import ItemJSON
+
+# StoreJSON is another custom type. It is a Dict where keys are str
+# and the values can be int, str or a list of ItemJSON, a previous
+# custom type:
+StoreJSON = Dict[str, Union(int, str, List[ItemJSON])]
 
 
 class StoreModel(db.Model):
-    
+
     __tablename__ = 'stores'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True)
 
     items = db.relationship('ItemModel', lazy='dynamic')
-    # 'dynamic' indicates the items of a store can be query, 
+    # 'dynamic' indicates the items of a store can be query,
     # whether they were created before or after the store.
 
     def __init__(self, name: str) -> None:
         self.name = name
 
-    def json(self) -> Dict:
+    def json(self) -> StoreJSON:  # using custom type
         return {
             'id': self.id,
             'name': self.name,

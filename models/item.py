@@ -1,10 +1,15 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from db import db
 
 
+# ItemJSON is a custom type. It is a Dict where keys are str
+# and the values can be int, float or str:
+ItemJSON = Dict[str, Union(int, float, str)]
+
+
 class ItemModel(db.Model):
-    
+
     __tablename__ = 'items'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +24,7 @@ class ItemModel(db.Model):
         self.price = price
         self.store_id = store_id
 
-    def json(self) -> Dict:
+    def json(self) -> ItemJSON:  # using custom type
         return {
             'id': self.id,
             'name': self.name,
@@ -34,7 +39,7 @@ class ItemModel(db.Model):
     @classmethod
     def find_by_name(cls, name: str):
         return cls.query.filter_by(name=name).first()
-  
+
     def save_to_db(self) -> None:
         db.session.add(self)
         db.session.commit()

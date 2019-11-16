@@ -1,10 +1,14 @@
-from typing import Dict
+from typing import Dict, Union
 
 from db import db
 
 
+# A last custom type
+UserJSON = Dict[str, Union[int, str]]
+
+
 class UserModel(db.Model):
-    
+
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -15,7 +19,7 @@ class UserModel(db.Model):
         self.username = username
         self.password = password
 
-    def json(self) -> Dict:
+    def json(self) -> UserJSON:  # using custom type
         return {
             'id': self.id,
             'username': self.username
