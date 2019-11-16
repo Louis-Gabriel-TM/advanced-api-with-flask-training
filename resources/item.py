@@ -12,6 +12,14 @@ from flask_restful import Resource, reqparse
 from models.item import ItemModel
 
 
+ADMIN_REQUIRED = "Admin privileges required."
+BLANK_ERROR = "{} cannot be left blank."
+INSERTION_ERROR = "An error occured while inserting the item."
+ITEM_ALREADY_EXISTS = "An item with name '{}' already exists."
+ITEM_DELETED = "Item deleted."
+ITEM_NOT_FOUND = "Item not found."
+
+
 class Item(Resource):
 
     parser = reqparse.RequestParser()
@@ -19,13 +27,13 @@ class Item(Resource):
         'price',
         type=float,
         required=True,
-        help="This field cannot be left blank.",
+        help=BLANK_ERROR.format("'price'"),
     )
     parser.add_argument(
         'store_id',
         type=int,
         required=True,
-        help="Every item needs a store_id.",
+        help=BLANK_ERROR.format("'store_id'"),
     )
 
     def get(self, name: str) -> Tuple:
@@ -33,13 +41,13 @@ class Item(Resource):
         if item:
             return item.json(), 200
 
-        return {'message': "Item not found."}, 404
+        return {'message': ITEM_NOT_FOUND}, 404
 
     @fresh_jwt_required
     def post(self, name: str) -> Tuple:
         if ItemModel.find_by_name(name):
             return {
-                'message': f"An item with name '{name}' already exists.'"
+                'message': ITEM_ALREADY_EXISTS.format(name),
             }, 400
 
         data = Item.parser.parse_args()
@@ -49,7 +57,7 @@ class Item(Resource):
             item.save_to_db()
         except:
             return {
-                'message': "An error occured while inserting the item.",
+                'message': INSERTION_ERROR,
             }, 500
 
         return item.json(), 201
@@ -73,12 +81,12 @@ class Item(Resource):
             item = ItemModel.find_by_name(name)
 
             if item:
-                iteme.delete_from_db()
-                return {'message': "Item deleted."}, 200
+                item.delete_from_db()
+                return {'message': ITEM_DELETED}, 200
 
-            return {'message': "Item not found."}, 404
+            return {'message': ITEM_NOT_FOUND}, 404
 
-        return {'message': "Admin privileges required."}, 401
+        return {'message': ADMIN_REQUIRED}, 401
 
 
 class ItemList(Resource):
