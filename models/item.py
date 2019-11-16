@@ -29,7 +29,7 @@ class ItemModel(db.Model):
             'id': self.id,
             'name': self.name,
             'price': self.price,
-            'store_id': self.store_id
+            'store_id': self.store_id,
         }
 
     @classmethod

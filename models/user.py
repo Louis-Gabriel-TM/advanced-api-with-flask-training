@@ -22,7 +22,7 @@ class UserModel(db.Model):
     def json(self) -> UserJSON:  # using custom type
         return {
             'id': self.id,
-            'username': self.username
+            'username': self.username,
         }
 
     @classmethod

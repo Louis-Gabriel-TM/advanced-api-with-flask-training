@@ -6,7 +6,7 @@ from models.store import StoreModel
 
 
 class Store(Resource):
-    
+
     def get(self, name: str) -> Tuple:
         store = StoreModel.find_by_name(name)
 
@@ -18,15 +18,15 @@ class Store(Resource):
     def post(self, name: str) -> Tuple:
         if StoreModel.find_by_name(name):
             return {
-                'message': f"A store with name '{name}' already exists."
+                'message': f"A store with name '{name}' already exists.",
             }, 400
-        
+
         store = StoreModel(name)
         try:
             store.save_to_db()
         except:
             return {
-                'message': "An error occured while creating the store."
+                'message': "An error occured while creating the store.",
             }, 500
 
         return store.json(), 201
@@ -41,6 +41,6 @@ class Store(Resource):
 
 
 class StoreList(Resource):
-    
+
     def get(self) -> Tuple:
         return {'stores': [store.json() for store in StoreModel.find_all()]}, 200

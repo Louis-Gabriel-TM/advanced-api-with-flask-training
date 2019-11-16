@@ -13,19 +13,19 @@ from models.item import ItemModel
 
 
 class Item(Resource):
-    
+
     parser = reqparse.RequestParser()
     parser.add_argument(
         'price',
         type=float,
         required=True,
-        help="This field cannot be left blank."
+        help="This field cannot be left blank.",
     )
     parser.add_argument(
         'store_id',
         type=int,
         required=True,
-        help="Every item needs a store_id."
+        help="Every item needs a store_id.",
     )
 
     def get(self, name: str) -> Tuple:
@@ -49,7 +49,7 @@ class Item(Resource):
             item.save_to_db()
         except:
             return {
-                'message': "An error occured while inserting the item."
+                'message': "An error occured while inserting the item.",
             }, 500
 
         return item.json(), 201
@@ -77,12 +77,12 @@ class Item(Resource):
                 return {'message': "Item deleted."}, 200
 
             return {'message': "Item not found."}, 404
-        
+
         return {'message': "Admin privileges required."}, 401
 
 
 class ItemList(Resource):
-    
+
     @jwt_optional  # user logged in or non logged in can access different data
     def get(self) -> Tuple:
         user_id = get_jwt_identity()  # return None if non logged in
@@ -93,5 +93,5 @@ class ItemList(Resource):
 
         return {
             'items': [item['name'] for item in items],
-            'message': "More data available if you log in."
+            'message': "More data available if you log in.",
         }, 200

@@ -20,13 +20,13 @@ _user_parser.add_argument(
     'username',
     type=str,
     required=True,
-    help="This field cannot be blank."
+    help="This field cannot be blank.",
 )
 _user_parser.add_argument(
     'password',
     type=str,
     required=True,
-    help="This field cannot be blank."
+    help="This field cannot be blank.",
 )
 
 
@@ -57,28 +57,30 @@ class User(Resource):  # should be absent in production
 
 
 class UserLogin(Resource):
-    
+
     def post(self) -> Tuple:
         data = _user_parser.parse_args()
         user = UserModel.find_by_username(data['username'])
 
-        if user and safe_str_cmp(user.password, data['password']):  # safe_str_cmp to avoid byte strings
+        # safe_str_cmp to avoid byte strings
+        if user and safe_str_cmp(user.password, data['password']):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
 
             return {
                 'access_token': access_token,
-                'refresh_token': refresh_token
+                'refresh_token': refresh_token,
             }, 200
 
         return {'message': "Invalid credentials."}, 401
 
 
 class UserLogout(Resource):
-    
+
     @jwt_required
     def post(self) -> Tuple:
-        jti = get_raw_jwt()['jti']  # 'jti' for 'JWT ID', a unique identifier for a token
+        # 'jti' for 'JWT ID', a unique identifier for a token
+        jti = get_raw_jwt()['jti']
         user_id = get_jwt_identity()
         BLACKLIST.add(jti)
 
@@ -86,7 +88,7 @@ class UserLogout(Resource):
 
 
 class UserRegister(Resource):
-    
+
     def post(self) -> Tuple:
         data = _user_parser.parse_args()
 
