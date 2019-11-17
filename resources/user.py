@@ -58,7 +58,8 @@ class User(Resource):  # should be absent in production
 
 class UserLogin(Resource):
 
-    def post(self) -> Tuple:
+    @classmethod
+    def post(cls) -> Tuple:
         data = _user_parser.parse_args()
         user = UserModel.find_by_username(data['username'])
 
@@ -77,8 +78,9 @@ class UserLogin(Resource):
 
 class UserLogout(Resource):
 
+    @classmethod
     @jwt_required
-    def post(self) -> Tuple:
+    def post(cls) -> Tuple:
         # 'jti' for 'JWT ID', a unique identifier for a token
         jti = get_raw_jwt()['jti']
         user_id = get_jwt_identity()
@@ -89,7 +91,8 @@ class UserLogout(Resource):
 
 class UserRegister(Resource):
 
-    def post(self) -> Tuple:
+    @classmethod
+    def post(cls) -> Tuple:
         data = _user_parser.parse_args()
 
         if UserModel.find_by_username(data['username']):
@@ -103,8 +106,9 @@ class UserRegister(Resource):
 
 class TokenRefresh(Resource):
 
+    @classmethod
     @jwt_refresh_token_required
-    def post(self) -> Tuple:
+    def post(cls) -> Tuple:
         """
         Get a new access token without requiring username and password,
         but only the 'refresh token' provided during login.

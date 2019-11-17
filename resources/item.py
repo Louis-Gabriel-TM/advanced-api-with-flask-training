@@ -18,6 +18,7 @@ INSERTION_ERROR = "An error occured while inserting the item."
 ITEM_ALREADY_EXISTS = "An item with name '{}' already exists."
 ITEM_DELETED = "Item deleted."
 ITEM_NOT_FOUND = "Item not found."
+MORE_DATA = "More data available if you log in."
 
 
 class Item(Resource):
@@ -36,15 +37,17 @@ class Item(Resource):
         help=BLANK_ERROR.format("'store_id'"),
     )
 
-    def get(self, name: str) -> Tuple:
+    @classmethod
+    def get(cls, name: str) -> Tuple:
         item = ItemModel.find_by_name(name)
         if item:
             return item.json(), 200
 
         return {'message': ITEM_NOT_FOUND}, 404
 
+    @classmethod
     @fresh_jwt_required
-    def post(self, name: str) -> Tuple:
+    def post(cls, name: str) -> Tuple:
         if ItemModel.find_by_name(name):
             return {
                 'message': ITEM_ALREADY_EXISTS.format(name),
@@ -62,7 +65,8 @@ class Item(Resource):
 
         return item.json(), 201
 
-    def put(self, name: str) -> Tuple:
+    @classmethod
+    def put(cls, name: str) -> Tuple:
         data = Item.parser.parse_args()
         item = ItemModel.find_by_name(name)
 
@@ -74,8 +78,9 @@ class Item(Resource):
         item.save_to_db()
         return item.json(), 200
 
+    @classmethod
     @jwt_required
-    def delete(self, name: str) -> Tuple:
+    def delete(cls, name: str) -> Tuple:
         claims = get_jwt_claims()  # we added a claim 'is_admin' in app.py
         if claims['is_admin']:
             item = ItemModel.find_by_name(name)
@@ -91,6 +96,7 @@ class Item(Resource):
 
 class ItemList(Resource):
 
+    @classmethod
     @jwt_optional  # user logged in or non logged in can access different data
     def get(self) -> Tuple:
         user_id = get_jwt_identity()  # return None if non logged in
@@ -101,5 +107,5 @@ class ItemList(Resource):
 
         return {
             'items': [item['name'] for item in items],
-            'message': "More data available if you log in.",
+            'message': MORE_DATA,
         }, 200
