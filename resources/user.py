@@ -57,10 +57,10 @@ class UserLogin(Resource):
         except ValidationError as err:
             return err.messages, 400
 
-        user = UserModel.find_by_username(user_data['username'])
+        user = UserModel.find_by_username(user_data.username)
 
         # safe_str_cmp to avoid byte strings
-        if user and safe_str_cmp(user.password, user_data['password']):
+        if user and safe_str_cmp(user.password, user_data.password):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
 
@@ -91,14 +91,13 @@ class UserRegister(Resource):
     def post(cls) -> Tuple:
         try:
             user_json = request.get_json()
-            user_data = user_schema.load(user_json)  # load() deserializes: dict -> object
+            user = user_schema.load(user_json)  # load() deserializes: dict -> object
         except ValidationError as err:
             return err.messages, 400
 
-        if UserModel.find_by_username(user_data['username']):
+        if UserModel.find_by_username(user.password):
             return {'message': "A user with that username already exists."}, 400
 
-        user = UserModel(**user_data)
         user.save_to_db()  # password should be encrypted before saving
 
         return {'message': "User created successfully."}, 201

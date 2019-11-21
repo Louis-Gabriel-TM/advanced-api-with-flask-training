@@ -6,6 +6,7 @@ from flask_restful import Api
 
 from blacklist import BLACKLIST
 from db import db
+from ma import ma
 from resources.user import (
     TokenRefresh, User, UserLogin, UserLogout, UserRegister
 )
@@ -113,4 +114,5 @@ api.add_resource(UserRegister, "/register")
 
 if __name__ == "__main__":
     db.init_app(app)
+    ma.init_app(app)  # init a Marshmallow object talking with the Flask app
     app.run(port=5000, debug=True)
