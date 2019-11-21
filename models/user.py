@@ -19,12 +19,6 @@ class UserModel(db.Model):
         self.username = username
         self.password = password
 
-    def json(self) -> UserJSON:  # using custom type
-        return {
-            'id': self.id,
-            'username': self.username,
-        }
-
     @classmethod
     # type hinting with the current class:
     def find_by_id(cls, _id: int) -> "UserModel":
