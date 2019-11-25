@@ -8,6 +8,6 @@ class ItemSchema(ma.ModelSchema):
     class Meta:
         model = ItemModel
 
-        load_only = ('store_id',)
+        load_only = ('store',)
         dump_only = ('id',)
         include_fk = True

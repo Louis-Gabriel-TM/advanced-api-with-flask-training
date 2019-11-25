@@ -7,8 +7,13 @@ from flask_restful import Api
 from blacklist import BLACKLIST
 from db import db
 from ma import ma
+from resources.item import Item, ItemList
 from resources.user import (
-    TokenRefresh, User, UserLogin, UserLogout, UserRegister
+    TokenRefresh, 
+    User, 
+    UserLogin, 
+    UserLogout, 
+    UserRegister
 )
 
 
@@ -105,11 +110,13 @@ def revoked_token_callback() -> Tuple:
     )
 
 
-api.add_resource(User, "/user/<int:user_id>")
-api.add_resource(UserLogin, "/login")
-api.add_resource(UserLogout, "/logout")
-api.add_resource(TokenRefresh, "/refresh")
-api.add_resource(UserRegister, "/register")
+api.add_resource(Item, '/item/<string:name>')
+api.add_resource(ItemList, '/items')
+api.add_resource(User, '/user/<int:user_id>')
+api.add_resource(UserLogin, '/login')
+api.add_resource(UserLogout, '/logout')
+api.add_resource(TokenRefresh, '/refresh')
+api.add_resource(UserRegister, '/register')
 
 
 if __name__ == "__main__":
