@@ -22,6 +22,7 @@ CREATED_SUCCESSFULLY = "User created successfully."
 INVALID_CREDENTIALS = "Invalid credentials!"
 NOT_CONFIRMED_ERROR = "You have not confirmed registration. Please check your email <{}>."
 USER_ALREADY_EXISTS = "A user with that username already exists."
+USER_CONFIRMED = "User confirmed."
 USER_DELETED = "User deleted."
 USER_LOGGED_OUT = "User <id={}> successfully logged out."
 USER_NOT_FOUND = "User not found."
@@ -57,6 +58,19 @@ class User(Resource):  # should be absent in production
             return {'message': USER_DELETED}, 200
 
 
+class UserConfirm(Resource):
+
+    @classmethod
+    def get(cls, user_id: int) -> Tuple:
+        user = UserModel.find_by_id(user_id)
+        if user:
+            user.activated = True
+            user.save_to_db()
+            return {'message': USER_CONFIRMED}, 200
+
+        return {'message': USER_NOT_FOUND}, 404
+
+
 class UserLogin(Resource):
 
     @classmethod
@@ -78,7 +92,7 @@ class UserLogin(Resource):
                     'refresh_token': refresh_token,
                 }, 200
 
-            return {'message': NOT_CONFIRMED_ERROR.format(user.email)}, 400
+            return {'message': NOT_CONFIRMED_ERROR.format(user.username)}, 400
 
         return {'message': INVALID_CREDENTIALS}, 401
 

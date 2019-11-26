@@ -9,4 +9,4 @@ class UserSchema(ma.ModelSchema):
         model = UserModel
 
         load_only = ('password',)  # can only becomes an object (for the API)
-        dump_only = ('id', 'activated')  # can only becomes a dictionnary (for the user)
+        dump_only = ('id', 'activated',)  # can only becomes a dictionnary (for the user)
