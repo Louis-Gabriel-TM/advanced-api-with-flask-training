@@ -15,6 +15,7 @@ class UserModel(db.Model):
     username = db.Column(db.String(80), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
     # with Flask-Marshmallow, the 'nullable=False' option makes __init__() method useless
+    activated = db.Column(db.Boolean, default=False)
 
     @classmethod
     # type hinting with the current class:

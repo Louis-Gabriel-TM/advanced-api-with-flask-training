@@ -6,10 +6,10 @@ from models.store import StoreModel
 from schemas.store import StoreSchema
 
 
-NAME_ALREADY_EXISTS = "A store with name '{}' already exists."
 ERROR_INSERTING = "An error occurred while inserting the store."
-STORE_NOT_FOUND = "Store not found."
+NAME_ALREADY_EXISTS = "A store with name '{}' already exists."
 STORE_DELETED = "Store deleted."
+STORE_NOT_FOUND = "Store not found."
 
 store_schema = StoreSchema()
 store_list_schema = StoreSchema(many=True)

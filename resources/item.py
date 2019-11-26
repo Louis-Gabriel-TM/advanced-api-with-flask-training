@@ -9,10 +9,10 @@ from models.item import ItemModel
 from schemas.item import ItemSchema
 
 
-NAME_ALREADY_EXISTS = "An item with name '{}' already exists."
 ERROR_INSERTING = "An error occurred while inserting the item."
-ITEM_NOT_FOUND = "Item not found."
 ITEM_DELETED = "Item deleted."
+ITEM_NOT_FOUND = "Item not found."
+NAME_ALREADY_EXISTS = "An item with name '{}' already exists."
 
 item_schema = ItemSchema()
 item_list_schema = ItemSchema(many=True)

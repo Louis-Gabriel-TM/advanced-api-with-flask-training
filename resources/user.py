@@ -18,12 +18,13 @@ from schemas.user import UserSchema
 from blacklist import BLACKLIST
 
 
-USER_ALREADY_EXISTS = "A user with that username already exists."
 CREATED_SUCCESSFULLY = "User created successfully."
-USER_NOT_FOUND = "User not found."
-USER_DELETED = "User deleted."
 INVALID_CREDENTIALS = "Invalid credentials!"
+NOT_CONFIRMED_ERROR = "You have not confirmed registration. Please check your email <{}>."
+USER_ALREADY_EXISTS = "A user with that username already exists."
+USER_DELETED = "User deleted."
 USER_LOGGED_OUT = "User <id={}> successfully logged out."
+USER_NOT_FOUND = "User not found."
 
 
 user_schema = UserSchema()  # this Schema has notably deprecated the json() method
@@ -67,13 +68,17 @@ class UserLogin(Resource):
 
         # safe_str_cmp to avoid byte strings
         if user and safe_str_cmp(user.password, user_data.password):
-            access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_refresh_token(user.id)
+            # checking after user existence and password for security reason (?)
+            if user.activated:
+                access_token = create_access_token(identity=user.id, fresh=True)
+                refresh_token = create_refresh_token(user.id)
 
-            return {
-                'access_token': access_token,
-                'refresh_token': refresh_token,
-            }, 200
+                return {
+                    'access_token': access_token,
+                    'refresh_token': refresh_token,
+                }, 200
+
+            return {'message': NOT_CONFIRMED_ERROR.format(user.email)}, 400
 
         return {'message': INVALID_CREDENTIALS}, 401
 
