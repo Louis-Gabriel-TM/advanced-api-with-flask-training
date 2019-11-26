@@ -26,7 +26,7 @@ class Item(Resource):
 
         if item:
             return item_schema.dump(item), 200
-        
+
         return {'messsage': ITEM_NOT_FOUND}, 404
 
     @classmethod
@@ -37,12 +37,7 @@ class Item(Resource):
 
         item_json = request.get_json()
         item_json['name'] = name
-
-        try:
-            item = item_schema.load(item_json)
-        except ValidationError as err:
-            return err.messages, 400
-
+        item = item_schema.load(item_json)
 
         try:
             item.save_to_db()
@@ -52,7 +47,7 @@ class Item(Resource):
         return item_schema.dump(item), 201
 
     @classmethod
-    def put(cls, name:str) -> Tuple:
+    def put(cls, name: str) -> Tuple:
         item_json = request.get_json()
         item = ItemModel.find_by_name(name)
 
@@ -60,11 +55,7 @@ class Item(Resource):
             item.price = item_json['price']
         else:
             item_json['name'] = name
-
-            try:
-                item = item_schema.load(item_json)
-            except ValidationError as err:
-                return err.messages, 400
+            item = item_schema.load(item_json)
 
         item.save_to_db()
         return item_schema.dump(item), 200

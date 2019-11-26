@@ -42,7 +42,8 @@ class User(Resource):  # should be absent in production
         user = UserModel.find_by_id(user_id)
 
         if user:
-            return user_schema.dump(user), 200  # dump() serializes: object -> dict
+            # dump() serializes: object -> dict
+            return user_schema.dump(user), 200
 
         return {'message': USER_NOT_FOUND}, 404
 
@@ -59,12 +60,9 @@ class UserLogin(Resource):
 
     @classmethod
     def post(cls) -> Tuple:
-        try:
-            user_json = request.get_json()
-            user_data = user_schema.load(user_json)  # load() deserializes: dict -> object
-        except ValidationError as err:
-            return err.messages, 400
-
+        user_json = request.get_json()
+        # load() deserializes: dict -> object
+        user_data = user_schema.load(user_json)
         user = UserModel.find_by_username(user_data.username)
 
         # safe_str_cmp to avoid byte strings
@@ -97,11 +95,9 @@ class UserRegister(Resource):
 
     @classmethod
     def post(cls) -> Tuple:
-        try:
-            user_json = request.get_json()
-            user = user_schema.load(user_json)  # load() deserializes: dict -> object
-        except ValidationError as err:
-            return err.messages, 400
+        user_json = request.get_json()
+        # load() deserializes: dict -> object
+        user = user_schema.load(user_json)
 
         if UserModel.find_by_username(user.password):
             return {'message': USER_ALREADY_EXISTS}, 400

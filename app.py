@@ -3,6 +3,7 @@ from typing import Dict, Tuple
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
+from marshmallow import ValidationError
 
 from blacklist import BLACKLIST
 from db import db
@@ -10,10 +11,10 @@ from ma import ma
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 from resources.user import (
-    TokenRefresh, 
-    User, 
-    UserLogin, 
-    UserLogout, 
+    TokenRefresh,
+    User,
+    UserLogin,
+    UserLogout,
     UserRegister
 )
 
@@ -36,6 +37,12 @@ api = Api(app)
 @app.before_first_request
 def create_tables() -> None:
     db.create_all()
+
+# We can define a global behavior for error during Marshmallow validation.
+# Possible only if 'app.config["PROPAGATE_EXCEPTIONS"]' is set to True.
+@app.errorhandler(ValidationError)
+def handle_marshmallow_validation(err) -> Tuple:
+    return jsonify(err.messages), 400
 
 
 jwt = JWTManager(app)
