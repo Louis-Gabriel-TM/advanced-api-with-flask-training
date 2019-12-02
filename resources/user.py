@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from flask import request
+from flask import make_response, render_template, request
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -61,12 +61,18 @@ class User(Resource):  # should be absent in production
 class UserConfirm(Resource):
 
     @classmethod
-    def get(cls, user_id: int) -> Tuple:
+    def get(cls, user_id: int):
         user = UserModel.find_by_id(user_id)
         if user:
             user.activated = True
             user.save_to_db()
-            return {'message': USER_CONFIRMED}, 200
+
+            headers = {'Content-Type': 'text/html'}
+            return make_response(
+                render_template('confirmation_page.html', email=user.username), 
+                200, 
+                headers
+            )
 
         return {'message': USER_NOT_FOUND}, 404
 
